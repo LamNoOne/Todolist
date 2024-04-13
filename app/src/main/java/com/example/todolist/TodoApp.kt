@@ -1,0 +1,11 @@
+package com.example.todolist
+
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+/**
+ * The application class for the Todo app.
+ */
+@HiltAndroidApp
+class TodoApp: Application() {
+}
