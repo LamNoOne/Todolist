@@ -12,16 +12,18 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * The Dagger module that provides the dependencies and their lifetime for the app.
+ * Module for dependency injection.
+ * This class provides the necessary dependencies for the application.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
     /**
      * Provides the TodoDatabase instance.
-     *
-     * @param app The application instance.
-     * @return The TodoDatabase instance.
+     * This method creates a new instance of the TodoDatabase.
+     * @param app the application context.
+     * @return the TodoDatabase instance.
      */
     @Provides
     @Singleton
@@ -35,13 +37,13 @@ object AppModule {
 
     /**
      * Provides the TodoRepository instance.
-     *
-     * @param database The TodoDatabase instance.
-     * @return The TodoRepository instance.
+     * This method creates a new instance of the TodoRepository.
+     * @param db the TodoDatabase instance.
+     * @return the TodoRepository instance.
      */
     @Provides
     @Singleton
-    fun provideTodoRepository(database: TodoDatabase): TodoRepository {
-        return TodoRepositoryImpl(database.dao)
+    fun provideTodoRepository(db: TodoDatabase): TodoRepository {
+        return TodoRepositoryImpl(db.dao)
     }
 }

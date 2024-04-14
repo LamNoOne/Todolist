@@ -1,6 +1,5 @@
 package com.example.todolist.ui.add_edit_todo
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,7 +19,7 @@ fun AddEditTodoScreen(
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
-            when (event) {
+            when(event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -32,14 +31,15 @@ fun AddEditTodoScreen(
             }
         }
     }
-
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onEvent(AddEditTodoEvent.OnSaveClick) }) {
+            FloatingActionButton(onClick = {
+                viewModel.onEvent(AddEditTodoEvent.OnSaveTodoClick)
+            }) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Save"
@@ -48,8 +48,7 @@ fun AddEditTodoScreen(
         }
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             TextField(
                 value = viewModel.title,

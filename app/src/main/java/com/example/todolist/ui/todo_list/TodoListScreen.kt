@@ -25,46 +25,38 @@ fun TodoListScreen(
 ) {
     val todos = viewModel.todos.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
-    /**
-     * Collect the uiEvent and handle it.
-     */
     LaunchedEffect(key1 = true) {
-        /**
-         * Every time a new uiEvent is emitted, this block will be executed.
-         */
         viewModel.uiEvent.collect { event ->
-            when (event) {
+            when(event) {
                 is UiEvent.ShowSnackBar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action
                     )
-                    /**
-                     * Handle the action performed on the snackbar.
-                     */
-                    if (result == SnackbarResult.ActionPerformed) {
+                    if(result == SnackbarResult.ActionPerformed) {
                         viewModel.onEvent(TodoListEvent.OnUndoDeleteClick)
                     }
                 }
-                is UiEvent.Navigate -> {
-                    onNavigate(event)
-                }
+                is UiEvent.Navigate -> onNavigate(event)
                 else -> Unit
             }
         }
     }
-
     Scaffold(
         scaffoldState = scaffoldState,
         floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onEvent(TodoListEvent.OnAddTodoClick) }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Todo")
+            FloatingActionButton(onClick = {
+                viewModel.onEvent(TodoListEvent.OnAddTodoClick)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add"
+                )
             }
         }
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             items(todos.value) { todo ->
                 TodoItem(

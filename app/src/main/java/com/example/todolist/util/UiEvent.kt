@@ -1,17 +1,32 @@
 package com.example.todolist.util
+
 /**
- * This sealed class represents different types of UI events that can occur in the application.
- * Each type of event is represented as a different subclass of UiEvent.
- *
- * @property PopBackStack This object represents an event where the application needs to navigate back in the navigation stack.
- * @property Navigate This data class represents an event where the application needs to navigate to a new screen. It has a single property `route` of type `String` which represents the route to the new screen.
- * @property ShowSnackBar This data class represents an event where the application needs to show a snack bar message. It has two properties: `message` of type `String` which represents the message to be shown, and `action` of type `String?` which represents an optional action that can be performed from the snack bar.
+ * Sealed class for UI events.
+ * This class represents the different types of events that can occur in the UI.
  */
 sealed class UiEvent {
-    object PopBackStack : UiEvent()
-    data class Navigate(val route: String) : UiEvent()
+
+    /**
+     * Object representing a pop back stack event.
+     * This event is used when the current fragment needs to be removed from the stack.
+     */
+    object PopBackStack: UiEvent()
+
+    /**
+     * Data class representing a navigation event.
+     * This event is used when a navigation to a different screen is required.
+     * @param route the route of the screen to navigate to.
+     */
+    data class Navigate(val route: String): UiEvent()
+
+    /**
+     * Data class representing a show snackbar event.
+     * This event is used when a snackbar needs to be shown.
+     * @param message the message to be shown in the snackbar.
+     * @param action the action to be shown in the snackbar. Null if no action is required.
+     */
     data class ShowSnackBar(
         val message: String,
         val action: String? = null
-    ) : UiEvent()
+    ): UiEvent()
 }

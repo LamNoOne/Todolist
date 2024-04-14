@@ -2,35 +2,38 @@ package com.example.todolist.data
 
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Repository interface for the todos.
+ * This interface represents the operations that can be performed on the Todo data.
+ */
 interface TodoRepository {
 
     /**
-     * Inserts a new todo into the database.
-     * If the todo already exists, replace it.
-     *
-     * @param todo The todo to be inserted.
+     * Insert a todo.
+     * This method is used to insert a new todo item.
+     * @param todo the todo item to be inserted.
      */
     suspend fun insertTodo(todo: Todo)
 
     /**
-     * Deletes a todo from the database.
-     *
-     * @param toto The todo to be deleted.
+     * Delete a todo.
+     * This method is used to delete a specific todo item.
+     * @param todo the todo item to be deleted.
      */
-    suspend fun deleteTodo(toto: Todo)
+    suspend fun deleteTodo(todo: Todo)
 
     /**
-     * Retrieves a todo by its id.
-     *
-     * @param id The id of the todo.
-     * @return The todo with the given id, or null if no todo with that id was found.
+     * Get a todo by id.
+     * This method is used to retrieve a specific todo item by its id.
+     * @param id the id of the todo item.
+     * @return the todo item with the specified id.
      */
     suspend fun getTodoById(id: Int): Todo?
 
     /**
-     * Retrieves all todos from the database.
-     *
-     * @return A list of all todos in the database.
+     * Get all todos.
+     * This method is used to retrieve all todo items.
+     * @return a list of all todo items.
      */
     fun getTodos(): Flow<List<Todo>>
 }
