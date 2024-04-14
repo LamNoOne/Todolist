@@ -24,10 +24,10 @@ class TodoRepositoryImpl(
     /**
      * Deletes a Todo from the database.
      *
-     * @param todo The Todo to be deleted.
+     * @param toto The Todo to be deleted.
      */
-    override suspend fun deleteTodo(todo: Todo) {
-        dao.deleteTodo(todo)
+    override suspend fun deleteTodo(toto: Todo) {
+        dao.deleteTodo(toto)
     }
 
     /**

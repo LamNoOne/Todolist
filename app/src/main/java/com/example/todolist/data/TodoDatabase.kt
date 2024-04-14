@@ -5,7 +5,8 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Todo::class],
-    version = 1
+    version = 1,
+    exportSchema = true
 )
 
 /**
