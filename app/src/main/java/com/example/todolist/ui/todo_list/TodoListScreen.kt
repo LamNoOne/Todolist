@@ -1,5 +1,6 @@
 package com.example.todolist.ui.todo_list
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -52,6 +53,8 @@ fun TodoListScreen(
     }
     Scaffold(
         scaffoldState = scaffoldState,
+        modifier = Modifier
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
                 backgroundColor = Color.LightGray,
@@ -127,6 +130,12 @@ fun TodoListScreen(
                 .fillMaxSize()
         ) {
             items(todos.value) { todo ->
+                val padding = if (todo.id == todos.value.last().id) {
+                    PaddingValues(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 100.dp)
+                } else {
+                    PaddingValues(5.dp)
+                }
+
                 TodoItem(
                     todo = todo,
                     onEvent = viewModel::onEvent,
@@ -135,7 +144,7 @@ fun TodoListScreen(
                         .clickable {
                             viewModel.onEvent(TodoListEvent.OnTodoClick(todo))
                         }
-                        .padding(5.dp)
+                        .padding(padding)
                 )
             }
         }

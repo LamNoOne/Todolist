@@ -43,8 +43,7 @@ fun AddEditTodoScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -62,7 +61,9 @@ fun AddEditTodoScreen(
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
         ) {
             TextField(
                 value = viewModel.title,
@@ -97,7 +98,7 @@ fun AddEditTodoScreen(
 fun TodoStatusDropdown(viewModel: AddEditTodoViewModel) {
     var expanded by remember { mutableStateOf(false) }
     val options = listOf("Completed", "Incomplete")
-    var selectedIndex by mutableStateOf(if(viewModel.isDone) 0 else 1)
+    var selectedIndex by mutableStateOf(if (viewModel.isDone) 0 else 1)
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -137,11 +138,22 @@ fun BackHandlerConfirm(viewModel: AddEditTodoViewModel, onPopBackStack: () -> Un
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Confirm Exit", fontSize = 16.sp, fontWeight = FontWeight.Medium) },
+            title = {
+                Text(
+                    text = "Confirm Exit",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            },
             text = { Text("You have unsaved changes. Are you sure you want to exit?") },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(text = "Cancel", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colors.primaryVariant)
+                    Text(
+                        text = "Cancel",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primaryVariant
+                    )
                 }
             },
             confirmButton = {
@@ -149,7 +161,12 @@ fun BackHandlerConfirm(viewModel: AddEditTodoViewModel, onPopBackStack: () -> Un
                     showDialog = false
                     onPopBackStack()
                 }) {
-                    Text(text = "Exit", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colors.primaryVariant)
+                    Text(
+                        text = "Exit",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primaryVariant
+                    )
                 }
             }
         )
