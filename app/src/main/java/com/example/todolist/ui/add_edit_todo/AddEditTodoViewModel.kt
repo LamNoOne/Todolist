@@ -88,11 +88,9 @@ class AddEditTodoViewModel @Inject constructor(
         when(event) {
             is AddEditTodoEvent.OnTitleChange -> {
                 title = event.title
-                isSaving = false
             }
             is AddEditTodoEvent.OnDescriptionChange -> {
                 description = event.description
-                isSaving = false
             }
             is AddEditTodoEvent.OnStatusChange -> {
                 isDone = event.isDone
@@ -127,9 +125,9 @@ class AddEditTodoViewModel @Inject constructor(
                     )
                     sendUiEvent(UiEvent.PopBackStack)
                 }
-                isSaving = true
             }
         }
+        isSaving = event is AddEditTodoEvent.OnSaveTodoClick || event is AddEditTodoEvent.OnStatusChange
     }
 
     /**
