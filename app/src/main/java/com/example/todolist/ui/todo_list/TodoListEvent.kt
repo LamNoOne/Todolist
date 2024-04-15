@@ -1,6 +1,6 @@
 package com.example.todolist.ui.todo_list
 
-import com.example.todolist.data.Todo
+import com.example.todolist.domain.model.Todo
 
 sealed class TodoListEvent {
     data class OnDeleteTodoClick(val todo: Todo): TodoListEvent()

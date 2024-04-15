@@ -1,6 +1,7 @@
-package com.example.todolist.data
+package com.example.todolist.data.remote
 
 import androidx.room.*
+import com.example.todolist.domain.model.Todo
 import kotlinx.coroutines.flow.Flow
 
 /**

@@ -2,8 +2,8 @@ package com.example.todolist.ui.todo_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.data.Todo
-import com.example.todolist.data.TodoRepository
+import com.example.todolist.domain.model.Todo
+import com.example.todolist.domain.repository.TodoRepository
 import com.example.todolist.util.Routes
 import com.example.todolist.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
