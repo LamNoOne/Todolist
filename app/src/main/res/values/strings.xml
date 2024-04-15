@@ -3,4 +3,6 @@
     <string name="header">Todo</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="no_todos">There\'s nothing to do yet</string>
+    <string name="no_todos_description">Add things you need to do here</string>
 </resources>
