@@ -67,9 +67,9 @@ fun TodoItem(
                 checked = todo.isDone,
                 onCheckedChange = { isChecked ->
                     onEvent(TodoListEvent.OnDoneChange(todo, isChecked))
-                }
+                },
+                modifier = Modifier.align(Alignment.Top)
             )
-
         }
     }
 }

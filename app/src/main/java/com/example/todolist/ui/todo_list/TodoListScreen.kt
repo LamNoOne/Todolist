@@ -1,12 +1,9 @@
 package com.example.todolist.ui.todo_list
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todolist.R
-import com.example.todolist.ui.util.rememberCurrentOffset
 import com.example.todolist.util.UiEvent
 
 @Composable
@@ -31,10 +27,6 @@ fun TodoListScreen(
 ) {
     val todos = viewModel.todos.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
-    val scrollState = rememberLazyListState()
-    val offset = rememberCurrentOffset(state = scrollState)
-
-    Log.d("TodoListScreen", "offset: ${offset.value}")
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -42,7 +34,8 @@ fun TodoListScreen(
                 is UiEvent.ShowSnackBar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message,
-                        actionLabel = event.action
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
                         viewModel.onEvent(TodoListEvent.OnUndoDeleteClick)
@@ -90,7 +83,6 @@ fun TodoListScreen(
         }
     ) {
         LazyColumn(
-            state = scrollState,
             modifier = Modifier
                 .fillMaxSize()
         ) {

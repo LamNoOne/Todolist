@@ -44,6 +44,19 @@ class AddEditTodoViewModel @Inject constructor(
         private set
 
     /**
+     * The status of the todo.
+     */
+    var isDone by mutableStateOf<Boolean>(false)
+        private set
+
+    /**
+     * The status of saving the todo.
+     */
+    private var isSaving by mutableStateOf(true)
+    // Get immutable version of isSaving
+    val _isSaving get() = isSaving
+
+    /**
      * Channel for UI events.
      */
     private val _uiEvent =  Channel<UiEvent>()
@@ -60,6 +73,7 @@ class AddEditTodoViewModel @Inject constructor(
                 repository.getTodoById(todoId)?.let { todo ->
                     title = todo.title
                     description = todo.description ?: ""
+                    isDone = todo.isDone
                     this@AddEditTodoViewModel.todo = todo
                 }
             }
@@ -74,9 +88,26 @@ class AddEditTodoViewModel @Inject constructor(
         when(event) {
             is AddEditTodoEvent.OnTitleChange -> {
                 title = event.title
+                isSaving = false
             }
             is AddEditTodoEvent.OnDescriptionChange -> {
                 description = event.description
+                isSaving = false
+            }
+            is AddEditTodoEvent.OnStatusChange -> {
+                isDone = event.isDone
+                if(title.isNotBlank() && todo?.id != null) {
+                    viewModelScope.launch {
+                        repository.insertTodo(
+                            Todo(
+                                title = title,
+                                description = description,
+                                isDone = isDone,
+                                id = todo?.id
+                            )
+                        )
+                    }
+                }
             }
             is AddEditTodoEvent.OnSaveTodoClick -> {
                 viewModelScope.launch {
@@ -90,12 +121,13 @@ class AddEditTodoViewModel @Inject constructor(
                         Todo(
                             title = title,
                             description = description,
-                            isDone = todo?.isDone ?: false,
+                            isDone = isDone,
                             id = todo?.id
                         )
                     )
                     sendUiEvent(UiEvent.PopBackStack)
                 }
+                isSaving = true
             }
         }
     }
