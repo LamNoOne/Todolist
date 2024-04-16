@@ -8,5 +8,6 @@ data class Todo(
     val title: String,
     val description: String?,
     val isDone: Boolean,
+    val timestamp: String ?= "CURRENT_TIMESTAMP",
     @PrimaryKey val id: Int? = null
 )

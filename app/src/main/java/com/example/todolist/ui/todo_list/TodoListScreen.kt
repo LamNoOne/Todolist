@@ -9,9 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +30,9 @@ fun TodoListScreen(
 ) {
     val todos = viewModel.todos.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
+    var fabClicked by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = fabClicked) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.ShowSnackBar -> {
@@ -77,6 +76,7 @@ fun TodoListScreen(
             FloatingActionButton(
                 onClick = {
                     viewModel.onEvent(TodoListEvent.OnAddTodoClick)
+                    fabClicked = !fabClicked
                 },
                 backgroundColor = Color.DarkGray
             ) {

@@ -11,9 +11,13 @@ import com.example.todolist.domain.repository.TodoRepository
 import com.example.todolist.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
+import kotlin.reflect.KProperty
 
 /**
  * ViewModel for the AddEditTodo screen.
@@ -23,7 +27,7 @@ import javax.inject.Inject
 class AddEditTodoViewModel @Inject constructor(
     private val repository: TodoRepository,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     /**
      * The todo to be edited. Null if a new todo is being created.
@@ -34,14 +38,19 @@ class AddEditTodoViewModel @Inject constructor(
     /**
      * The title of the todo.
      */
-    var title by mutableStateOf("")
+    var title by mutableStateOf<String>("")
         private set
 
     /**
      * The description of the todo.
      */
-    var description by mutableStateOf("")
+    var description by mutableStateOf<String>("")
         private set
+
+    /**
+     * The date of the todo.
+     */
+    var timestamp = MutableStateFlow<String>("${LocalDate.now()} ${LocalTime.MIDNIGHT}")
 
     /**
      * The status of the todo.
@@ -52,14 +61,15 @@ class AddEditTodoViewModel @Inject constructor(
     /**
      * The status of saving the todo.
      */
-    private var isSaving by mutableStateOf(true)
+    private var isSaving by mutableStateOf<Boolean>(true)
+
     // Get immutable version of isSaving
     val _isSaving get() = isSaving
 
     /**
      * Channel for UI events.
      */
-    private val _uiEvent =  Channel<UiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     /**
@@ -68,12 +78,13 @@ class AddEditTodoViewModel @Inject constructor(
      */
     init {
         val todoId = savedStateHandle.get<Int>("todoId")!!
-        if(todoId != -1) {
+        if (todoId != -1) {
             viewModelScope.launch {
                 repository.getTodoById(todoId)?.let { todo ->
                     title = todo.title
                     description = todo.description ?: ""
                     isDone = todo.isDone
+                    timestamp.value = todo.timestamp.toString()
                     this@AddEditTodoViewModel.todo = todo
                 }
             }
@@ -85,22 +96,39 @@ class AddEditTodoViewModel @Inject constructor(
      * @param event the event to handle.
      */
     fun onEvent(event: AddEditTodoEvent) {
-        when(event) {
+        when (event) {
             is AddEditTodoEvent.OnTitleChange -> {
                 title = event.title
             }
             is AddEditTodoEvent.OnDescriptionChange -> {
                 description = event.description
             }
-            is AddEditTodoEvent.OnStatusChange -> {
-                isDone = event.isDone
-                if(title.isNotBlank() && todo?.id != null) {
+            is AddEditTodoEvent.OnTimestampChange -> {
+                timestamp.value = event.timestamp
+                if (title.isNotBlank() && todo?.id != null) {
                     viewModelScope.launch {
                         repository.insertTodo(
                             Todo(
                                 title = title,
                                 description = description,
                                 isDone = isDone,
+                                timestamp = timestamp.value,
+                                id = todo?.id
+                            )
+                        )
+                    }
+                }
+            }
+            is AddEditTodoEvent.OnStatusChange -> {
+                isDone = event.isDone
+                if (title.isNotBlank() && todo?.id != null) {
+                    viewModelScope.launch {
+                        repository.insertTodo(
+                            Todo(
+                                title = title,
+                                description = description,
+                                isDone = isDone,
+                                timestamp = timestamp.value,
                                 id = todo?.id
                             )
                         )
@@ -109,10 +137,12 @@ class AddEditTodoViewModel @Inject constructor(
             }
             is AddEditTodoEvent.OnSaveTodoClick -> {
                 viewModelScope.launch {
-                    if(title.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackBar(
-                            message = "The title can't be empty"
-                        ))
+                    if (title.isBlank()) {
+                        sendUiEvent(
+                            UiEvent.ShowSnackBar(
+                                message = "The title can't be empty"
+                            )
+                        )
                         return@launch
                     }
                     repository.insertTodo(
@@ -120,6 +150,7 @@ class AddEditTodoViewModel @Inject constructor(
                             title = title,
                             description = description,
                             isDone = isDone,
+                            timestamp = timestamp.value,
                             id = todo?.id
                         )
                     )
@@ -127,7 +158,8 @@ class AddEditTodoViewModel @Inject constructor(
                 }
             }
         }
-        isSaving = event is AddEditTodoEvent.OnSaveTodoClick || event is AddEditTodoEvent.OnStatusChange
+        isSaving =
+            event is AddEditTodoEvent.OnSaveTodoClick || event is AddEditTodoEvent.OnStatusChange || event is AddEditTodoEvent.OnTimestampChange
     }
 
     /**

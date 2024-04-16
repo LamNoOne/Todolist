@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todolist.domain.model.Todo
+import com.example.todolist.util.Const
+import com.example.todolist.util.convertFormat
 
 @Composable
 fun TodoItem(
@@ -25,6 +27,7 @@ fun TodoItem(
     onEvent: (TodoListEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val todoDate = todo.timestamp?.let { convertFormat(it, Const.currentFormat, Const.desiredFormat) }
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
@@ -58,6 +61,8 @@ fun TodoItem(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                todoDate?.let { Text(text = it, fontSize = 12.sp) }
                 todo.description?.let {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = it)
