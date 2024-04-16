@@ -1,4 +1,3 @@
-
 package com.example.todolist.util
 
 import java.text.SimpleDateFormat
@@ -33,4 +32,21 @@ fun convertToDateTime(dateString: String): Pair<LocalDate, LocalTime> {
     val formatter = DateTimeFormatter.ofPattern(Const.currentFormat, Locale.US)
     val dateTime = LocalDateTime.parse(dateString, formatter)
     return Pair(dateTime.toLocalDate(), dateTime.toLocalTime())
+}
+
+fun stringToDateTimeInCurrentTimeZone(text: String): Date? {
+    val formatter = SimpleDateFormat(Const.currentFormat, Locale.US)
+    formatter.timeZone =
+        TimeZone.getTimeZone(Const.currentTimeZone) // Set timezone to Vietnam (GMT+7)
+    return formatter.parse(text)
+}
+
+fun getSecondsFromCurrentToCurrentTimeZone(text: String): Long {
+    val dateTime = stringToDateTimeInCurrentTimeZone(text) ?: return -1
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone(Const.currentTimeZone))
+    val currentTime = calendar.time
+    val diff = dateTime.time - currentTime.time
+    if (diff < 0) return -1
+    // Convert milliseconds to seconds
+    return diff / 1000
 }

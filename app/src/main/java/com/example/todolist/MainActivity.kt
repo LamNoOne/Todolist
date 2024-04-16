@@ -1,8 +1,10 @@
 package com.example.todolist
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,8 +29,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val context = this
         setContent {
             TodoListTheme {
                 Surface {
@@ -41,7 +45,8 @@ class MainActivity : ComponentActivity() {
                             TodoListScreen(
                                 onNavigate = {
                                     navController.navigate(it.route)
-                                }
+                                },
+                                context = context
                             )
                         }
                         composable(
