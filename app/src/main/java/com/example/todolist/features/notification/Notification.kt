@@ -28,7 +28,7 @@ class MyNotification (private val context: Context, private val title: String, p
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         notificationManager.createNotificationChannel(notificationChannel)
         notificationBuilder = NotificationCompat.Builder(context, channelID).apply {
-            setSmallIcon(R.drawable.ic_launcher_background)
+            setSmallIcon(R.drawable.clock)
             addAction(R.drawable.ic_launcher_background, "Open Message", pendingIntent)
             setContentIntent(pendingIntent)
             setContentTitle(title)
