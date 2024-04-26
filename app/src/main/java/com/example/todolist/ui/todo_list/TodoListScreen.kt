@@ -29,6 +29,7 @@ import com.example.todolist.features.alarm.classes.AndroidAlarmScheduler
 import com.example.todolist.features.alarm.data.AlarmItem
 import com.example.todolist.util.UiEvent
 import com.example.todolist.util.getSecondsFromCurrentToCurrentTimeZone
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -41,18 +42,22 @@ fun TodoListScreen(
     val todos = viewModel.todos.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
     var fabClicked by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = fabClicked) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.ShowSnackBar -> {
-                    val result = scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = event.action,
-                        duration = SnackbarDuration.Short
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onEvent(TodoListEvent.OnUndoDeleteClick)
+                    scope.launch {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                        val result = scaffoldState.snackbarHostState.showSnackbar(
+                            message = event.message,
+                            actionLabel = event.action,
+                            duration = SnackbarDuration.Short
+                        )
+                        if (result == SnackbarResult.ActionPerformed) {
+                            viewModel.onEvent(TodoListEvent.OnUndoDeleteClick)
+                        }
                     }
                 }
                 is UiEvent.Navigate -> onNavigate(event)
@@ -64,9 +69,10 @@ fun TodoListScreen(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize(),
+        backgroundColor = Color.White,
         topBar = {
             TopAppBar(
-                backgroundColor = Color.LightGray,
+                backgroundColor = Color.White,
                 title = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -114,7 +120,7 @@ fun TodoListScreen(
                         modifier = Modifier
                             .padding(horizontal = 64.dp)
                             .fillMaxWidth(),
-                        painter = painterResource(id = R.drawable.none_background),
+                        painter = painterResource(id = R.drawable.logo),
                         contentDescription = "No Todos Background",
                         contentScale = ContentScale.FillWidth
                     )

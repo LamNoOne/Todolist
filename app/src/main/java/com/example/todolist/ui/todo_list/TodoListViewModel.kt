@@ -53,6 +53,7 @@ class TodoListViewModel @Inject constructor(
                 deletedTodo?.let { todo ->
                     viewModelScope.launch {
                         repository.insertTodo(todo)
+                        deletedTodo = null
                     }
                 }
             }

@@ -49,7 +49,8 @@ fun TodoItem(
                     Text(
                         text = todo.title,
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     IconButton(onClick = {
@@ -57,15 +58,16 @@ fun TodoItem(
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
+                            contentDescription = "Delete",
+                            tint = Color.Red
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                todoDate?.let { Text(text = it, fontSize = 12.sp) }
+                todoDate?.let { Text(text = it, fontSize = 12.sp, color = Color.Black) }
                 todo.description?.let {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = it)
+                    Text(text = it, color = Color.DarkGray)
                 }
             }
             Checkbox(

@@ -3,12 +3,20 @@ package com.example.todolist.ui.add_edit_todo
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.*
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,9 +41,9 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.time.format.DateTimeFormatter
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTodoScreen(
     onPopBackStack: () -> Unit,
@@ -63,6 +71,7 @@ fun AddEditTodoScreen(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize(),
+        backgroundColor = Color.White,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -84,7 +93,7 @@ fun AddEditTodoScreen(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            TextField(
+            OutlinedTextField(
                 value = viewModel.title,
                 onValueChange = {
                     viewModel.onEvent(AddEditTodoEvent.OnTitleChange(it))
@@ -92,10 +101,14 @@ fun AddEditTodoScreen(
                 placeholder = {
                     Text(text = stringResource(id = R.string.title))
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(
+            OutlinedTextField(
                 value = viewModel.description,
                 onValueChange = {
                     viewModel.onEvent(AddEditTodoEvent.OnDescriptionChange(it))
@@ -105,7 +118,11 @@ fun AddEditTodoScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = false,
-                maxLines = 5
+                maxLines = 5,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
             TimeManager(context = context, viewModel)
@@ -130,18 +147,24 @@ fun TodoStatusDropdown(viewModel: AddEditTodoViewModel) {
             Text(text = options[selectedIndex], color = Color.Black, fontSize = 16.sp)
         }
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.width(IntrinsicSize.Min)
+        MaterialTheme(
+            colors = MaterialTheme.colors.copy(
+                surface = Color.White
+            )
         ) {
-            options.forEachIndexed { index, option ->
-                DropdownMenuItem(onClick = {
-                    selectedIndex = index
-                    expanded = false
-                    viewModel.onEvent(AddEditTodoEvent.OnStatusChange(isDone = !index.toBoolean()))
-                }) {
-                    Text(text = option)
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.width(IntrinsicSize.Min),
+            ) {
+                options.forEachIndexed { index, option ->
+                    DropdownMenuItem(onClick = {
+                        selectedIndex = index
+                        expanded = false
+                        viewModel.onEvent(AddEditTodoEvent.OnStatusChange(isDone = !index.toBoolean()))
+                    }) {
+                        Text(text = option)
+                    }
                 }
             }
         }
@@ -162,11 +185,13 @@ fun BackHandlerConfirm(viewModel: AddEditTodoViewModel, onPopBackStack: () -> Un
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
+            backgroundColor = Color.White,
             title = {
                 Text(
                     text = "Confirm Exit",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
                 )
             },
             text = { Text("You have unsaved changes. Are you sure you want to exit?") },
@@ -285,7 +310,7 @@ fun TimeManager(context: Context, viewModel: AddEditTodoViewModel) {
                         contentDescription = "clock"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Pick Time", fontSize = 16.sp)
+                    Text(text = "Pick Time", fontSize = 16.sp, color = if(isSystemInDarkTheme()) Color.White else Color.Black)
                 }
             }
         }
