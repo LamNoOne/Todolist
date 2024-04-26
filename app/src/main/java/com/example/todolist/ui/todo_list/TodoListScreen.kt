@@ -2,7 +2,6 @@ package com.example.todolist.ui.todo_list
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,12 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todolist.R
-import com.example.todolist.features.alarm.classes.AndroidAlarmScheduler
-import com.example.todolist.features.alarm.data.AlarmItem
 import com.example.todolist.util.UiEvent
-import com.example.todolist.util.getSecondsFromCurrentToCurrentTimeZone
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -152,28 +146,6 @@ fun TodoListScreen(
                     PaddingValues(5.dp)
                 }
 
-                val seconds = todo.timestamp?.let { it1 ->
-                    getSecondsFromCurrentToCurrentTimeZone(
-                        it1
-                    )
-                }
-
-                if (seconds != null) {
-                    if(seconds != (-1).toLong() && !todo.isDone && seconds >= 0) {
-                        val alarmItem = AlarmItem(
-                            time = LocalDateTime.now().plusSeconds(seconds.toLong()),
-                            message = todo.title
-                        )
-                        alarmItem.let {
-                            val scheduler = AndroidAlarmScheduler(context)
-                            scheduler.schedule(it)
-                        }
-
-                        Log.d("TodoListScreen", "Seconds: $seconds")
-                        Log.d("TodoListScreen", "AlarmItem: ${todo.title}")
-                    }
-                }
-
                 TodoItem(
                     todo = todo,
                     onEvent = viewModel::onEvent,
@@ -182,7 +154,8 @@ fun TodoListScreen(
                         .clickable {
                             viewModel.onEvent(TodoListEvent.OnTodoClick(todo))
                         }
-                        .padding(padding)
+                        .padding(padding),
+                    context = context
                 )
             }
         }

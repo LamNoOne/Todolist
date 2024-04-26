@@ -1,5 +1,11 @@
+@file:Suppress("NAME_SHADOWING")
+
 package com.example.todolist.ui.todo_list
 
+import android.content.Context
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -18,16 +24,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todolist.domain.model.Todo
+import com.example.todolist.features.alarm.classes.AndroidAlarmScheduler
+import com.example.todolist.features.alarm.data.AlarmItem
 import com.example.todolist.util.Const
 import com.example.todolist.util.convertFormat
+import com.example.todolist.util.getSecondsFromCurrentToCurrentTimeZone
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodoItem(
     todo: Todo,
     onEvent: (TodoListEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    context: Context
 ) {
-    val todoDate = todo.timestamp?.let { convertFormat(it, Const.currentFormat, Const.desiredFormat) }
+    val seconds = todo.timestamp?.let { it1 ->
+        getSecondsFromCurrentToCurrentTimeZone(
+            it1
+        )
+    }
+
+    val scheduler = AndroidAlarmScheduler(context)
+
+    val alarmItem = seconds?.let { LocalDateTime.now().plusSeconds(it.toLong()) }?.let {
+        todo.id?.let { it1 ->
+            AlarmItem(
+                time = it,
+                message = todo.title,
+                id = it1
+            )
+        }
+    }
+
+    if (seconds != null) {
+        if (seconds != (-1).toLong() && !todo.isDone && seconds >= 0) {
+            alarmItem?.let {
+                scheduler.schedule(it)
+            }
+
+            Log.d("TodoListScreen", "Seconds: $seconds")
+            Log.d("TodoListScreen", "AlarmItem: ${todo.title}")
+        }
+    }
+
+    val todoDate =
+        todo.timestamp?.let { convertFormat(it, Const.currentFormat, Const.desiredFormat) }
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
@@ -74,6 +116,19 @@ fun TodoItem(
                 checked = todo.isDone,
                 onCheckedChange = { isChecked ->
                     onEvent(TodoListEvent.OnDoneChange(todo, isChecked))
+                    if (isChecked) {
+                        alarmItem?.let {
+                            scheduler.cancel(it)
+                            println("NOTIFICATION CANCELLED: ${it.message}")
+                            println(it.time)
+                        }
+                    } else {
+                        alarmItem?.let {
+                            scheduler.schedule(it)
+                            println("NOTIFICATION SCHEDULED: ${it.message}")
+                            println(it.time)
+                        }
+                    }
                 },
                 modifier = Modifier.align(Alignment.Top)
             )
