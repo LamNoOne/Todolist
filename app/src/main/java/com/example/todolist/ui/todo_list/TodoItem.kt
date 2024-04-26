@@ -96,6 +96,11 @@ fun TodoItem(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     IconButton(onClick = {
+                        alarmItem?.let {
+                            scheduler.cancel(it)
+                            println("NOTIFICATION CANCELLED: ${it.message}")
+                            println(it.time)
+                        }
                         onEvent(TodoListEvent.OnDeleteTodoClick(todo))
                     }) {
                         Icon(

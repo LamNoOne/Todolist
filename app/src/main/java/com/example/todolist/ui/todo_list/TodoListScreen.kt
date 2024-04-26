@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todolist.R
+import com.example.todolist.ui.helpers.undoDeleteAndReschedule
 import com.example.todolist.util.UiEvent
 import kotlinx.coroutines.launch
 
@@ -50,6 +51,9 @@ fun TodoListScreen(
                             duration = SnackbarDuration.Short
                         )
                         if (result == SnackbarResult.ActionPerformed) {
+                            viewModel.deletedTodo?.let {todo ->
+                                undoDeleteAndReschedule(todo, context)
+                            }
                             viewModel.onEvent(TodoListEvent.OnUndoDeleteClick)
                         }
                     }

@@ -35,7 +35,7 @@ class TodoListViewModel @Inject constructor(
     /**
      * The todo that was recently deleted. Null if no todo was recently deleted.
      */
-    private var deletedTodo: Todo? = null
+    var deletedTodo: Todo? = null
 
     /**
      * Handle events from the UI.
